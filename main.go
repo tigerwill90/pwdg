@@ -3,9 +3,9 @@ package main
 import (
 	crypto "crypto/rand"
 	"encoding/binary"
-	"errors"
 	"flag"
 	"fmt"
+	"math"
 	"math/rand"
 	"os"
 	"strings"
@@ -30,21 +30,15 @@ func init() {
 
 func main() {
 	var n int
-	flag.IntVar(&n, "n", 16, "number of password to generate")
+	flag.IntVar(&n, "n", 16, "set number of password to generate")
 	var length int
-	flag.IntVar(&length, "length", 15, "set password length")
-	var minUpperLength int
-	flag.IntVar(&minUpperLength, "min-uppercase-length", 2, "min uppercase length")
-	var minLowerLength int
-	flag.IntVar(&minLowerLength, "min-lowercase-length", 2, "min lowercase length")
-	var minSpecialLength int
-	flag.IntVar(&minSpecialLength, "min-special-length", 2, "min special length")
-	var minDigitLength int
-	flag.IntVar(&minDigitLength, "min-digit-length", 2, "min digit length")
+	flag.IntVar(&length, "len", 15, "set password length")
 	flag.Parse()
 
+	fmt.Printf("Generating %d passwords of length %d\n\n", n, length)
+
 	for i := 1; i <= n; i++ {
-		password, err := generate(length, minUpperLength, minLowerLength, minSpecialLength, minDigitLength)
+		password, err := generate(length)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			return
@@ -59,34 +53,32 @@ func main() {
 	}
 }
 
-func generate(length, minUpperLength, minLowerLength, minSpecialLength, minDigitLength int) (string, error) {
+func generate(length int) (string, error) {
 	password := strings.Builder{}
 
-	for i := 0; i < minLowerLength; i++ {
+	min := int(math.Round(float64(length) * 0.15))
+
+	for i := 0; i < min; i++ {
 		random := rand.Intn(len(lowercase))
 		password.WriteByte(lowercase[random])
 	}
 
-	for i := 0; i < minUpperLength; i++ {
+	for i := 0; i < min; i++ {
 		random := rand.Intn(len(uppercase))
 		password.WriteByte(uppercase[random])
 	}
 
-	for i := 0; i < minSpecialLength; i++ {
+	for i := 0; i < min; i++ {
 		random := rand.Intn(len(special))
 		password.WriteByte(special[random])
 	}
 
-	for i := 0; i < minDigitLength; i++ {
+	for i := 0; i < min; i++ {
 		random := rand.Intn(len(digit))
 		password.WriteByte(digit[random])
 	}
 
-	remainingLen := length - minLowerLength - minUpperLength - minSpecialLength - minDigitLength
-
-	if remainingLen < 0 {
-		return "", errors.New("password length is to small to satisfy all constraint")
-	}
+	remainingLen := length - min*4
 
 	for i := 0; i < remainingLen; i++ {
 		random := rand.Intn(len(allCharSet))
