@@ -8,6 +8,7 @@ import (
 	"math"
 	"math/rand"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -40,14 +41,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("Generating %d passwords of length %d\n\n", n, length)
+	fmt.Printf("Generating %d passwords of length %d %s\n\n", n, length, unquoteCodePoint("\\U0001f680"))
 
 	for i := 1; i <= n; i++ {
-		password, err := generate(length)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return
-		}
+		password := generate(length)
 		if i%4 == 0 {
 			fmt.Println(password)
 		} else if i == n {
@@ -58,7 +55,7 @@ func main() {
 	}
 }
 
-func generate(length int) (string, error) {
+func generate(length int) string {
 	password := strings.Builder{}
 
 	min := int(math.Round(float64(length) * 0.15))
@@ -95,5 +92,13 @@ func generate(length int) (string, error) {
 		passwordRune[i], passwordRune[j] = passwordRune[j], passwordRune[i]
 	})
 
-	return string(passwordRune), nil
+	return string(passwordRune)
+}
+
+func unquoteCodePoint(s string) string {
+	r, err := strconv.ParseInt(strings.TrimPrefix(s, "\\U"), 16, 32)
+	if err != nil {
+		panic(err)
+	}
+	return string(r)
 }
