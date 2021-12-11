@@ -9,7 +9,9 @@ go install github.com/tigerwill90/pwdg@latest
 
 ### Getting started
 ````bash
-pwdg -length 20
+pwdg -len 20
+
+# Generating 16 passwords of length 15 🚀
 
 # H8yIstP&sX^@6AI  $6^To2@#cJUigAZ  Zo8sR^0#VU&PWnm  R4qD*5CK6QtSh#$
 # $RGty7zPS^2y#Hs  TEicTi3&OAg5Xr*  nR2Qz&k*WcMb2de  Ki^I7^V3jB#m2xq
