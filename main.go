@@ -35,6 +35,11 @@ func main() {
 	flag.IntVar(&length, "len", 15, "set password length")
 	flag.Parse()
 
+	if length <= 0 || n <= 0 {
+		fmt.Fprintln(os.Stderr, "Come on! Let's be realistic!")
+		os.Exit(1)
+	}
+
 	fmt.Printf("Generating %d passwords of length %d\n\n", n, length)
 
 	for i := 1; i <= n; i++ {
