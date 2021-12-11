@@ -85,10 +85,10 @@ func generate(length int) (string, error) {
 		password.WriteByte(allCharSet[random])
 	}
 
-	inRune := []rune(password.String())
-	rand.Shuffle(len(inRune), func(i, j int) {
-		inRune[i], inRune[j] = inRune[j], inRune[i]
+	passwordRune := []rune(password.String())
+	rand.Shuffle(len(passwordRune), func(i, j int) {
+		passwordRune[i], passwordRune[j] = passwordRune[j], passwordRune[i]
 	})
 
-	return string(inRune), nil
+	return string(passwordRune), nil
 }
