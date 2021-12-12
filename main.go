@@ -19,7 +19,10 @@ const (
 	digit     = "0123456789"
 )
 
-var allCharSet = lowercase + uppercase + special + digit
+var (
+	allCharSet       = lowercase + uppercase + special + digit
+	noSpecialCharSet = lowercase + uppercase + digit
+)
 
 func init() {
 	var b [8]byte
@@ -34,6 +37,8 @@ func main() {
 	flag.IntVar(&n, "n", 16, "set number of password to generate")
 	var length int
 	flag.IntVar(&length, "len", 20, "set password length")
+	var noSpecial bool
+	flag.BoolVar(&noSpecial, "no-special", false, "no special charset")
 	flag.Parse()
 
 	if length <= 0 || n <= 0 {
@@ -41,10 +46,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("Generating %d passwords of length %d %s\n\n", n, length, unquoteCodePoint("\\U0001f680"))
+	fmt.Printf("Generating %d passwords of length %d %s\n", n, length, unquoteCodePoint("\\U0001f680"))
+	if noSpecial {
+		fmt.Println("- special charset disable!")
+	}
+	fmt.Println()
 
 	for i := 1; i <= n; i++ {
-		password := generate(length)
+		password := generate(length, noSpecial)
 		if i%4 == 0 {
 			fmt.Println(password)
 		} else if i == n {
@@ -55,10 +64,11 @@ func main() {
 	}
 }
 
-func generate(length int) string {
+func generate(length int, noSpecCharSet bool) string {
 	password := strings.Builder{}
 
 	min := int(math.Round(float64(length) * 0.15))
+	remainingLen := length - min*3
 
 	for i := 0; i < min; i++ {
 		random := rand.Intn(len(lowercase))
@@ -71,20 +81,26 @@ func generate(length int) string {
 	}
 
 	for i := 0; i < min; i++ {
-		random := rand.Intn(len(special))
-		password.WriteByte(special[random])
-	}
-
-	for i := 0; i < min; i++ {
 		random := rand.Intn(len(digit))
 		password.WriteByte(digit[random])
 	}
 
-	remainingLen := length - min*4
+	if !noSpecCharSet {
+		for i := 0; i < min; i++ {
+			random := rand.Intn(len(special))
+			password.WriteByte(special[random])
+		}
+		remainingLen -= min
+	}
 
 	for i := 0; i < remainingLen; i++ {
-		random := rand.Intn(len(allCharSet))
-		password.WriteByte(allCharSet[random])
+		if !noSpecCharSet {
+			random := rand.Intn(len(allCharSet))
+			password.WriteByte(allCharSet[random])
+			continue
+		}
+		random := rand.Intn(len(noSpecialCharSet))
+		password.WriteByte(noSpecialCharSet[random])
 	}
 
 	passwordRune := []rune(password.String())
