@@ -33,7 +33,7 @@ func main() {
 	var n int
 	flag.IntVar(&n, "n", 16, "set number of password to generate")
 	var length int
-	flag.IntVar(&length, "len", 15, "set password length")
+	flag.IntVar(&length, "len", 20, "set password length")
 	flag.Parse()
 
 	if length <= 0 || n <= 0 {
