@@ -1,6 +1,6 @@
 # pwdg
 
-Minimal high entropy password generator.
+A minimal high entropy password generator.
 
 **Install**
 ````bash
