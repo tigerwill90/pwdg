@@ -62,6 +62,7 @@ func main() {
 			fmt.Print(password, "  ")
 		}
 	}
+	fmt.Println()
 }
 
 func generate(length int, noSpecCharSet bool) string {
