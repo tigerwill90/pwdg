@@ -34,14 +34,16 @@ func init() {
 
 func main() {
 	var n int
-	flag.IntVar(&n, "n", 16, "set number of password to generate")
+	flag.IntVar(&n, "n", 16, "set the number of passwords to generate")
 	var length int
-	flag.IntVar(&length, "len", 20, "set password length")
+	flag.IntVar(&length, "len", 20, "set passwords length")
 	var noSpecial bool
-	flag.BoolVar(&noSpecial, "no-special", false, "no special charset")
+	flag.BoolVar(&noSpecial, "no-special", false, "disable special charset")
+	var col int
+	flag.IntVar(&col, "col", 4, "set the number of column on which display passwords")
 	flag.Parse()
 
-	if length <= 0 || n <= 0 {
+	if length <= 0 || n <= 0 || col <= 0 {
 		fmt.Fprintln(os.Stderr, "Come on! Let's be realistic!")
 		os.Exit(1)
 	}
@@ -54,13 +56,11 @@ func main() {
 
 	for i := 1; i <= n; i++ {
 		password := generate(length, noSpecial)
-		if i%4 == 0 {
+		if i%col == 0 || i == n {
 			fmt.Println(password)
-		} else if i == n {
-			fmt.Println(password)
-		} else {
-			fmt.Print(password, "  ")
+			continue
 		}
+		fmt.Printf("%s\t", password)
 	}
 	fmt.Println()
 }
