@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"flag"
 	"fmt"
+	"github.com/nbutton23/zxcvbn-go"
 	"math"
 	"math/rand"
 	"os"
@@ -57,10 +58,10 @@ func main() {
 	for i := 1; i <= n; i++ {
 		password := generate(length, noSpecial)
 		if i%col == 0 || i == n {
-			fmt.Println(password)
+			fmt.Printf("%s (%.2f bits)\n", password, entropy(password))
 			continue
 		}
-		fmt.Printf("%s\t", password)
+		fmt.Printf("%s (%.2f bits)\t", password, entropy(password))
 	}
 	fmt.Println()
 }
@@ -118,4 +119,9 @@ func unquoteCodePoint(s string) string {
 		panic(err)
 	}
 	return string(r)
+}
+
+func entropy(s string) (bits float64) {
+	e := zxcvbn.PasswordStrength(s, nil)
+	return e.Entropy
 }
