@@ -58,10 +58,10 @@ func main() {
 	for i := 1; i <= n; i++ {
 		password := generate(length, noSpecial)
 		if i%col == 0 || i == n {
-			fmt.Printf("%s (%.2f bits)\n", password, entropy(password))
+			fmt.Printf("%s (%.2f)\n", password, entropy(password))
 			continue
 		}
-		fmt.Printf("%s (%.2f bits)\t", password, entropy(password))
+		fmt.Printf("%s (%.2f)\t", password, entropy(password))
 	}
 	fmt.Println()
 }
