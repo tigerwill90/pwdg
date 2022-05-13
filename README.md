@@ -1,4 +1,3 @@
-[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=tigerwill90_pwdg)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=tigerwill90_pwdg&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=tigerwill90_pwdg)
 # pwdg
 
@@ -24,3 +23,9 @@ pwdg -n 16 -len 15 -col 4
 # Help
 pwdg -h
 ````
+
+### License
+The MIT License (MIT). Please see [License](LICENSE) File for more information.
+
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=tigerwill90_pwdg)
+
