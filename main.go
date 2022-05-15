@@ -16,7 +16,7 @@ import (
 const (
 	lowercase = "abcdedfghijklmnopqrstuvwxyz"
 	uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	special   = "!@#$%&*^"
+	special   = "!@#$%&*^{}[]()-;:><_+,.="
 	digit     = "0123456789"
 )
 
