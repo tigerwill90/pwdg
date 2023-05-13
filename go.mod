@@ -1,6 +1,6 @@
 module github.com/tigerwill90/pwdg
 
-go 1.18
+go 1.20
 
 retract v0.0.1
 

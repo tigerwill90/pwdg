@@ -25,12 +25,14 @@ var (
 	noSpecialCharSet = lowercase + uppercase + digit
 )
 
+var r *rand.Rand
+
 func init() {
 	var b [8]byte
 	if _, err := crypto.Read(b[:]); err != nil {
 		panic(fmt.Sprintf("cannot init seed: %s", err))
 	}
-	rand.Seed(int64(binary.LittleEndian.Uint64(b[:])))
+	r = rand.New(rand.NewSource(int64(binary.LittleEndian.Uint64(b[:]))))
 }
 
 func main() {
@@ -45,7 +47,7 @@ func main() {
 	flag.Parse()
 
 	if length <= 0 || n <= 0 || col <= 0 {
-		fmt.Fprintln(os.Stderr, "Come on! Let's be realistic!")
+		_, _ = fmt.Fprintln(os.Stderr, "Come on! Let's be realistic!")
 		os.Exit(1)
 	}
 
@@ -73,23 +75,23 @@ func generate(length int, noSpecCharSet bool) string {
 	remainingLen := length - min*3
 
 	for i := 0; i < min; i++ {
-		random := rand.Intn(len(lowercase))
+		random := r.Intn(len(lowercase))
 		password.WriteByte(lowercase[random])
 	}
 
 	for i := 0; i < min; i++ {
-		random := rand.Intn(len(uppercase))
+		random := r.Intn(len(uppercase))
 		password.WriteByte(uppercase[random])
 	}
 
 	for i := 0; i < min; i++ {
-		random := rand.Intn(len(digit))
+		random := r.Intn(len(digit))
 		password.WriteByte(digit[random])
 	}
 
 	if !noSpecCharSet {
 		for i := 0; i < min; i++ {
-			random := rand.Intn(len(special))
+			random := r.Intn(len(special))
 			password.WriteByte(special[random])
 		}
 		remainingLen -= min
@@ -97,16 +99,16 @@ func generate(length int, noSpecCharSet bool) string {
 
 	for i := 0; i < remainingLen; i++ {
 		if !noSpecCharSet {
-			random := rand.Intn(len(allCharSet))
+			random := r.Intn(len(allCharSet))
 			password.WriteByte(allCharSet[random])
 			continue
 		}
-		random := rand.Intn(len(noSpecialCharSet))
+		random := r.Intn(len(noSpecialCharSet))
 		password.WriteByte(noSpecialCharSet[random])
 	}
 
 	passwordRune := []rune(password.String())
-	rand.Shuffle(len(passwordRune), func(i, j int) {
+	r.Shuffle(len(passwordRune), func(i, j int) {
 		passwordRune[i], passwordRune[j] = passwordRune[j], passwordRune[i]
 	})
 
@@ -114,11 +116,11 @@ func generate(length int, noSpecCharSet bool) string {
 }
 
 func unquoteCodePoint(s string) string {
-	r, err := strconv.ParseInt(strings.TrimPrefix(s, "\\U"), 16, 32)
+	i, err := strconv.ParseInt(strings.TrimPrefix(s, "\\U"), 16, 32)
 	if err != nil {
 		panic(err)
 	}
-	return string(r)
+	return string(i)
 }
 
 func entropy(s string) (bits float64) {
