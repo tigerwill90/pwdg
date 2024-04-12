@@ -2,15 +2,15 @@ package main
 
 import (
 	crypto "crypto/rand"
-	"encoding/binary"
 	"flag"
 	"fmt"
-	"github.com/nbutton23/zxcvbn-go"
 	"math"
-	"math/rand"
+	"math/rand/v2"
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/nbutton23/zxcvbn-go"
 )
 
 const (
@@ -28,11 +28,11 @@ var (
 var r *rand.Rand
 
 func init() {
-	var b [8]byte
+	var b [32]byte
 	if _, err := crypto.Read(b[:]); err != nil {
 		panic(fmt.Sprintf("cannot init seed: %s", err))
 	}
-	r = rand.New(rand.NewSource(int64(binary.LittleEndian.Uint64(b[:]))))
+	r = rand.New(rand.NewChaCha8(b))
 }
 
 func main() {
@@ -75,23 +75,23 @@ func generate(length int, noSpecCharSet bool) string {
 	remainingLen := length - min*3
 
 	for i := 0; i < min; i++ {
-		random := r.Intn(len(lowercase))
+		random := r.IntN(len(lowercase))
 		password.WriteByte(lowercase[random])
 	}
 
 	for i := 0; i < min; i++ {
-		random := r.Intn(len(uppercase))
+		random := r.IntN(len(uppercase))
 		password.WriteByte(uppercase[random])
 	}
 
 	for i := 0; i < min; i++ {
-		random := r.Intn(len(digit))
+		random := r.IntN(len(digit))
 		password.WriteByte(digit[random])
 	}
 
 	if !noSpecCharSet {
 		for i := 0; i < min; i++ {
-			random := r.Intn(len(special))
+			random := r.IntN(len(special))
 			password.WriteByte(special[random])
 		}
 		remainingLen -= min
@@ -99,11 +99,11 @@ func generate(length int, noSpecCharSet bool) string {
 
 	for i := 0; i < remainingLen; i++ {
 		if !noSpecCharSet {
-			random := r.Intn(len(allCharSet))
+			random := r.IntN(len(allCharSet))
 			password.WriteByte(allCharSet[random])
 			continue
 		}
-		random := r.Intn(len(noSpecialCharSet))
+		random := r.IntN(len(noSpecialCharSet))
 		password.WriteByte(noSpecialCharSet[random])
 	}
 
