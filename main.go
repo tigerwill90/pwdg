@@ -44,6 +44,8 @@ func main() {
 	flag.BoolVar(&noSpecial, "no-special", false, "disable special charset")
 	var col int
 	flag.IntVar(&col, "col", 4, "set the number of column on which display passwords")
+	var verbose bool
+	flag.BoolVar(&verbose, "verbose", false, "display formatted crack time instead of entropy")
 	flag.Parse()
 
 	if length <= 0 || n <= 0 || col <= 0 {
@@ -60,10 +62,18 @@ func main() {
 	for i := 1; i <= n; i++ {
 		password := generate(length, noSpecial)
 		if i%col == 0 || i == n {
-			fmt.Printf("%s (%.2f)\n", password, entropy(password))
+			if verbose {
+				fmt.Printf("%s (%s)\n", password, difficulty(password))
+			} else {
+				fmt.Printf("%s (%.2f)\n", password, entropy(password))
+			}
 			continue
 		}
-		fmt.Printf("%s (%.2f)\t", password, entropy(password))
+		if verbose {
+			fmt.Printf("%s (%s)\t", password, difficulty(password))
+		} else {
+			fmt.Printf("%s (%.2f)\t", password, entropy(password))
+		}
 	}
 	fmt.Println()
 }
@@ -126,4 +136,9 @@ func unquoteCodePoint(s string) string {
 func entropy(s string) (bits float64) {
 	e := zxcvbn.PasswordStrength(s, nil)
 	return e.Entropy
+}
+
+func difficulty(s string) string {
+	e := zxcvbn.PasswordStrength(s, nil)
+	return e.CrackTimeDisplay
 }
